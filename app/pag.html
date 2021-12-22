@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>x</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <div id="payment" />
+
+
+    <script src="" async defer></script>
+    <script type="text/javascript"
+        src="https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script>
+    <!-- 
+    <script type="text/javascript"
+        src="https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script> -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            var host = location.host;
+
+            $("#payment")
+                .append(
+                    `<div style="margin-top: 10em;">
+                        <div><h1 style="font-size: 17px;text-align: center;font-family: Lexend;">Confirmando pagamento<h1/><div/>
+                        <div style="text-align: center"> <img style="width:25%; text-align: center;" src="http://${host}/img/loading.gif" /> <div/>
+                        <div><h4 style="font-family: Lexend; font-size: 14px">Carregando...<h4/><div/>
+                        <div style="display: flex; justify-content: center;align-items: center;"> <img style="width: 70%" src="http://${host}/img/logo-pagseguro.png" /> <div/>
+                    </div>`
+                );
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var session_token = urlParams.get('session_token');
+
+            var card_token = null;
+
+            PagSeguroDirectPayment.onSenderHashReady(function (response) {
+                if (response.status == 'error') {
+                    console.log(response.message);
+                } else {
+                    callbackSenderHash(response.senderHash)
+                }
+            });
+
+            // function callbackSenderHash(senderHash) {
+            //     $.post("http://192.168.0.103:8001/returnCreditCardToken", { suggest: 'teste', senderHash }, function (data, status) {
+            //         alert("Data: " + data + "\nStatus: " + status);
+            //     });
+            // }
+
+            function callbackSenderHash(senderHash) {
+                PagSeguroDirectPayment.setSessionId(`${session_token}`);
+
+                PagSeguroDirectPayment.createCardToken({
+                    cardNumber: '4111111111111111', // Número do cartão de crédito
+                    brand: 'visa', // Bandeira do cartão
+                    cvv: '123', // CVV do cartão
+                    expirationMonth: '12', // Mês da expiração do cartão
+                    expirationYear: '2030', // Ano da expiração do cartão, é necessário os 4 dígitos.
+                    success: function (response) {
+                        $.post("http://192.168.0.103:8001/returnCreditCardToken", { suggest: response, senderHash }, function (data, status) {
+                            alert("Data: " + data + "\nStatus: " + status);
+                        });
+                    },
+                    error: function (response) {
+                        $.post("http://192.168.0.103:8001/returnCreditCardToken", { suggest: false }, function (data, status) {
+                            alert("Data: " + data + "\nStatus: " + status);
+                        });
+                    }
+                });
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>
