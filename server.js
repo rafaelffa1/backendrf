@@ -29,7 +29,7 @@ app.use(require("./app/router"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerConfig));
 
 // var port = process.env.port || 3000
-var port = process.env.port || 8002;
+var port = process.env.port || 21243;
 // var port2 = process.env.port || 8002
 // io.listen(port2);
 server.listen(port);
