@@ -9,12 +9,12 @@ const admin = require("firebase-admin");
 const app = express();
 const server = require("http").Server(app);
 
-var serviceAccount = require("./mercadomineiro-6fa9e-51540d8f41ea.json");
+// var serviceAccount = require("./mercadomineiro-6fa9e-51540d8f41ea.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://mercadomineiro-6fa9e.firebaseio.com",
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://mercadomineiro-6fa9e.firebaseio.com",
+// });
 
 setupWebsocket(server);
 
